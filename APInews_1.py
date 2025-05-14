@@ -1,4 +1,13 @@
-# noticias_app.py
+import os
+import requests
+from dotenv import load_dotenv
+
+# Carrega variáveis do arquivo .env
+load_dotenv()
+
+# Lê a chave da NewsAPI do ambiente
+API_KEY = os.getenv("API_KEI_NEWS")
+URL = "https://newsapi.org/v2/everything"
 
 def mostrar_menu():
     print("\n==== MENU DE CONSULTAS DE NOTÍCIAS ====")
@@ -6,44 +15,91 @@ def mostrar_menu():
     print("2. Ver histórico de buscas")
     print("3. Sair")
 
+def buscar_noticias(tema, limite):
+    """Consulta a NewsAPI e retorna uma lista de dicionários com título, fonte e autor."""
+    if not API_KEY:
+        print("❌ API_KEY não encontrada. Verifique se está no .env.")
+        return []
+
+    params = {
+        'q': tema,
+        'pageSize': limite,
+        'apiKey': API_KEY,
+        'language': 'pt',
+        'sortBy': 'publishedAt'
+    }
+
+    resposta = requests.get(URL, params=params)
+
+    if resposta.status_code != 200:
+        print(f"❌ Erro na requisição: {resposta.status_code}")
+        return []
+
+    dados = resposta.json()
+    artigos = dados.get('articles', [])
+
+    resultados = []
+    for artigo in artigos:
+        resultados.append({
+            'titulo': artigo.get('title'),
+            'fonte': artigo.get('source', {}).get('name'),
+            'autor': artigo.get('author')
+        })
+
+    return resultados
 
 def main():
     historico = []
 
     while True:
         mostrar_menu()
-        escolha = input("Escolha uma opção: ")
+        escolha = input("Escolha uma opção: ").strip()
 
-        if escolha == '1':
-            tema = input("Digite o tema da notícia: ")
-            limite = input("Quantas notícias deseja buscar (máximo 100)? ")
+        if escolha.lower() == '1':
+            tema = input("Digite o tema da notícia: ").strip()
 
-            # Validação simples
-            if not limite.isdigit() or int(limite) < 1 or int(limite) > 100:
-                print("Número inválido. Digite entre 1 e 100.")
+            if not tema:
+                print("❌ Tema inválido. Tente novamente.")
                 continue
 
-            # Aqui depois vamos chamar a função de busca na API
-            print(f"Consultando notícias sobre: {tema}...")
+            limite = input("Quantas notícias deseja buscar (máximo 25)? ").strip()
 
-            # Armazena no histórico
-            historico.append({'tema': tema, 'quantidade': int(limite)})
+            if not limite.isdigit():
+                print("❌ Digite apenas números inteiros.")
+                continue
 
-        elif escolha == '2':
-            if not historico:
-                print("Nenhuma busca feita ainda.")
+            limite = int(limite)
+            if not (1 <= limite <= 100):
+                print("❌ Valor fora do limite permitido (1 a 25).")
+                continue
+
+            tema_formatado = tema.lower()
+            noticias = buscar_noticias(tema_formatado, limite)
+
+            print(f"\n🔎 Resultados para: '{tema}'")
+            if noticias:
+                for i, noticia in enumerate(noticias, 1):
+                    print(f"\n{i}. {noticia['titulo']}")
+                    print(f"   Fonte: {noticia['fonte']} | Autor: {noticia['autor']}")
             else:
-                print("\n=== HISTÓRICO DE BUSCAS ===")
-                for item in historico:
-                    print(f"Tema: {item['tema']} - Quantidade: {item['quantidade']}")
+                print("Nenhuma notícia encontrada.")
 
-        elif escolha == '3':
-            print("Encerrando o programa. Até logo!")
+            historico.append({'tema': tema, 'quantidade': limite})
+
+        elif escolha.lower() == '2':
+            if not historico:
+                print("⚠️ Nenhuma busca registrada ainda.")
+            else:
+                print("\n📚 Histórico de Buscas:")
+                for item in historico:
+                    print(f"- Tema: {item['tema']} | Quantidade: {item['quantidade']}")
+
+        elif escolha.lower() == '3':
+            print("👋 Encerrando o programa. Até logo!")
             break
 
         else:
-            print("Opção inválida. Tente novamente.")
-
+            print("❌ Opção inválida. Tente novamente.")
 
 if __name__ == "__main__":
     main()
