@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import os
 import requests
 from dotenv import load_dotenv
@@ -49,7 +52,14 @@ def buscar_noticias(tema, limite):
     return resultados
 
 def main():
-    historico = []
+    HISTORICO_ARQUIVO = "historico.json"
+
+    # Carrega histórico existente, se houver
+    if Path(HISTORICO_ARQUIVO).exists():
+        with open(HISTORICO_ARQUIVO, "r", encoding="utf-8") as f:
+            historico = json.load(f)
+    else:
+        historico = []
 
     while True:
         mostrar_menu()
@@ -69,7 +79,7 @@ def main():
                 continue
 
             limite = int(limite)
-            if not (1 <= limite <= 100):
+            if not (1 <= limite <= 25):
                 print("❌ Valor fora do limite permitido (1 a 25).")
                 continue
 
@@ -84,7 +94,12 @@ def main():
             else:
                 print("Nenhuma notícia encontrada.")
 
-            historico.append({'tema': tema, 'quantidade': limite})
+            registro = {'tema': tema, 'quantidade': limite}
+            historico.append(registro)
+
+            # Salva no arquivo .json
+            with open(HISTORICO_ARQUIVO, "w", encoding="utf-8") as f:
+                json.dump(historico, f, indent=4, ensure_ascii=False)
 
         elif escolha.lower() == '2':
             if not historico:
@@ -95,7 +110,19 @@ def main():
                     print(f"- Tema: {item['tema']} | Quantidade: {item['quantidade']}")
 
         elif escolha.lower() == '3':
-            print("👋 Encerrando o programa. Até logo!")
+            # Mostra resumo final ao sair
+            print("\n📊 Resumo final das buscas:")
+
+            total_buscas = len(historico)
+            temas_agrupados = {}
+
+            for item in historico:
+                tema = item['tema'].lower()
+                temas_agrupados[tema] = temas_agrupados.get(tema, 0) + item['quantidade']
+
+            print(f"Total de buscas feitas: {total_buscas}")
+            for tema, total in temas_agrupados.items():
+                print(f"- Tema: {tema} | Total de notícias buscadas: {total}")
             break
 
         else:
