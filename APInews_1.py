@@ -1,9 +1,8 @@
-import json
-from pathlib import Path
-
 import os
 import requests
 from dotenv import load_dotenv
+import json
+from pathlib import Path
 
 # Carrega variáveis do arquivo .env
 load_dotenv()
