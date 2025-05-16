@@ -31,3 +31,31 @@ def login():
         login()
 
 
+# 3. Função para exibir o menu e receber a escolha do usuário
+def menu():
+    while True:
+        print("=== MENU PRINCIPAL ===")
+        print("1 - Visualizar todos os posts")
+        print("2 - Visualizar comentários de um post")
+        print("3 - Ver meus próprios posts")
+        print("4 - Ver posts de outro usuário")
+        print("5 - Criar um novo post")
+        print("6 - Sair e ver resumo")
+
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == "1":
+            visualizar_posts()
+        elif escolha == "2":
+            visualizar_comentarios()
+        elif escolha == "3":
+            ver_meus_posts()
+        elif escolha == "4":
+            filtrar_por_usuario()
+        elif escolha == "5":
+            criar_post()
+        elif escolha == "6":
+            mostrar_resumo()
+            break
+        else:
+            print("Opção inválida. Tente novamente.\n")
