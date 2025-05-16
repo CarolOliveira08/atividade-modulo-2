@@ -109,3 +109,25 @@ def ver_meus_posts():
         print(f"\nTotal de {len(meus_posts)} posts exibidos.\n")
     else:
         print("Erro ao buscar seus posts.\n")
+
+# 7. Função para visualizar posts de outro usuário
+def filtrar_por_usuario():
+    print("\n=== POSTS DE OUTRO USUÁRIO ===")
+    outro_id = input("Digite o ID do usuário que deseja consultar: ")
+
+    url = f"https://jsonplaceholder.typicode.com/posts?userId={outro_id}"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        posts = resposta.json()
+        if posts:
+            for post in posts:
+                print(f"ID: {post['id']} | Título: {post['title']}")
+            interacoes["posts_vistos"] += len(posts)
+            print(f"\nTotal de {len(posts)} posts exibidos.\n")
+        else:
+            print("Este usuário não possui posts.\n")
+    else:
+        print("Erro ao buscar os posts desse usuário.\n")
+
+
