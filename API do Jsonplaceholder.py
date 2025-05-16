@@ -93,3 +93,19 @@ def visualizar_comentarios():
     else:
         print("Erro ao buscar comentários.\n")
 
+# 6. Função para ver os próprios posts
+def ver_meus_posts():
+    print("\n=== MEUS POSTS ===")
+    user_id = usuario_logado["id"]
+
+    url = f"https://jsonplaceholder.typicode.com/posts?userId={user_id}"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        meus_posts = resposta.json()
+        for post in meus_posts:
+            print(f"ID: {post['id']} | Título: {post['title']}")
+        interacoes["posts_vistos"] += len(meus_posts)
+        print(f"\nTotal de {len(meus_posts)} posts exibidos.\n")
+    else:
+        print("Erro ao buscar seus posts.\n")
