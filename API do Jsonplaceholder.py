@@ -1,162 +1,50 @@
 # 1. Importações e variáveis globais
-import requests
 
-usuarios = {
-    "101": {"email": "ana@example.com", "senha": "1234"},
-    "102": {"email": "joao@example.com", "senha": "abcd"},
-    "103": {"email": "maria@example.com", "senha": "4321"},
-}
+import requests  # Para fazer requisições à API
+import sys  # Para encerrar o programa
 
-interacoes = {
-    "posts_vistos": 0,
-    "comentarios_vistos": 0,
-    "posts_criados": 0,
-}
+usuarios = {}  # Simula o banco de dados (email como chave)
 
-usuario_logado = None
 
-# 2. Função de login
-def login():
-    global usuario_logado
-    print("\n=== LOGIN ===")
-    codigo = input("Digite o código do usuário: ")
-    email = input("Digite o e-mail: ")
-    senha = input("Digite a senha: ")
+# 2. Função de cadastro de usuário
+def cadastrar_usuario():
+    print("\n--- Cadastro de Usuário ---")
+    nome = input("Digite seu nome: ")
+    email = input("Digite seu e-mail: ")
+    senha = input("Digite sua senha: ")
 
-    if codigo in usuarios and usuarios[codigo]["email"] == email and usuarios[codigo]["senha"] == senha:
-        print("Login bem-sucedido!\n")
-        usuario_logado = {"id": codigo, "email": email}
+    if email in usuarios:
+        print("Usuário já cadastrado!")
     else:
-        print("Usuário ou senha incorretos.\n")
-        login()
+        codigo = len(usuarios) + 1
+        usuarios[email] = {"codigo": codigo, "nome": nome, "senha": senha}
+        print(f"Usuário {nome} cadastrado com sucesso!\n")
 
 
-# 3. Função para exibir o menu e receber a escolha do usuário
-def menu():
+# 3. Menu inicial
+def menu_inicial():
     while True:
-        print("=== MENU PRINCIPAL ===")
-        print("1 - Visualizar todos os posts")
-        print("2 - Visualizar comentários de um post")
-        print("3 - Ver meus próprios posts")
-        print("4 - Ver posts de outro usuário")
-        print("5 - Criar um novo post")
-        print("6 - Sair e ver resumo")
+        print("Bem-vindo! Deseja se cadastrar?")
+        print("1 - não (Cadastrar)")
+        print("2 - sim (Fazer login)")
+        print("3 - sair")
+        opcao = input("Escolha uma opção: ")
 
-        escolha = input("Escolha uma opção: ")
-
-        if escolha == "1":
-            visualizar_posts()
-        elif escolha == "2":
-            visualizar_comentarios()
-        elif escolha == "3":
-            ver_meus_posts()
-        elif escolha == "4":
-            filtrar_por_usuario()
-        elif escolha == "5":
-            criar_post()
-        elif escolha == "6":
-            mostrar_resumo()
-            break
+        if opcao == "1":
+            cadastrar_usuario()
+        elif opcao == "2":
+            return "login"
+        elif opcao == "3":
+            print("Encerrando o sistema. Até logo!")
+            sys.exit()
         else:
-            print("Opção inválida. Tente novamente.\n")
+            print("Opção inválida. Tente novamente.")
 
 
-# 4. Função para visualizar todos os posts
-def visualizar_posts():
-    print("\n=== LISTA DE POSTS ===")
-    url = "https://jsonplaceholder.typicode.com/posts"
-    resposta = requests.get(url)
+# Executa o menu inicial
+menu_inicial
 
-    if resposta.status_code == 200:
-        posts = resposta.json()
-        for post in posts:
-            print(f"ID: {post['id']} | Título: {post['title']}")
-        interacoes["posts_vistos"] += len(posts)
-        print(f"\nTotal de {len(posts)} posts exibidos.\n")
-    else:
-        print("Erro ao buscar os posts.\n")
 
-# 5. Função para visualizar comentários de um post
-def visualizar_comentarios():
-    print("\n=== COMENTÁRIOS DE UM POST ===")
-    post_id = input("Digite o ID do post: ")
 
-    url = f"https://jsonplaceholder.typicode.com/posts/{post_id}/comments"
-    resposta = requests.get(url)
 
-    if resposta.status_code == 200:
-        comentarios = resposta.json()
-        for comentario in comentarios:
-            print(f"- {comentario['name']} ({comentario['email']}): {comentario['body']}\n")
-        interacoes["comentarios_vistos"] += len(comentarios)
-        print(f"Total de {len(comentarios)} comentários exibidos.\n")
-    else:
-        print("Erro ao buscar comentários.\n")
 
-# 6. Função para ver os próprios posts
-def ver_meus_posts():
-    print("\n=== MEUS POSTS ===")
-    user_id = usuario_logado["id"]
-
-    url = f"https://jsonplaceholder.typicode.com/posts?userId={user_id}"
-    resposta = requests.get(url)
-
-    if resposta.status_code == 200:
-        meus_posts = resposta.json()
-        for post in meus_posts:
-            print(f"ID: {post['id']} | Título: {post['title']}")
-        interacoes["posts_vistos"] += len(meus_posts)
-        print(f"\nTotal de {len(meus_posts)} posts exibidos.\n")
-    else:
-        print("Erro ao buscar seus posts.\n")
-
-# 7. Função para visualizar posts de outro usuário
-def filtrar_por_usuario():
-    print("\n=== POSTS DE OUTRO USUÁRIO ===")
-    outro_id = input("Digite o ID do usuário que deseja consultar: ")
-
-    url = f"https://jsonplaceholder.typicode.com/posts?userId={outro_id}"
-    resposta = requests.get(url)
-
-    if resposta.status_code == 200:
-        posts = resposta.json()
-        if posts:
-            for post in posts:
-                print(f"ID: {post['id']} | Título: {post['title']}")
-            interacoes["posts_vistos"] += len(posts)
-            print(f"\nTotal de {len(posts)} posts exibidos.\n")
-        else:
-            print("Este usuário não possui posts.\n")
-    else:
-        print("Erro ao buscar os posts desse usuário.\n")
-
-# 8. Função para criar um novo post
-def criar_post():
-    print("\n=== CRIAR NOVO POST ===")
-    titulo = input("Digite o título do post: ")
-    corpo = input("Digite o conteúdo do post: ")
-
-    novo_post = {
-        "userId": usuario_logado["id"],
-        "title": titulo,
-        "body": corpo
-    }
-
-    url = "https://jsonplaceholder.typicode.com/posts"
-    resposta = requests.post(url, json=novo_post)
-
-    if resposta.status_code == 201:
-        resultado = resposta.json()
-        print("\nPost criado com sucesso!")
-        print(f"ID do novo post: {resultado['id']}")
-        interacoes["posts_criados"] += 1
-    else:
-        print("Erro ao criar post.\n")
-
-# 9. Função para mostrar resumo das interações
-def mostrar_resumo():
-    print("\n=== RESUMO DAS INTERAÇÕES ===")
-    print(f"Posts visualizados: {interacoes['posts_vistos']}")
-    print(f"Comentários visualizados: {interacoes['comentarios_vistos']}")
-    print(f"Posts criados: {interacoes['posts_criados']}")
-    print("\nObrigado por usar o sistema!")
