@@ -105,4 +105,20 @@ def menu_usuario(usuario):
         else:
             print("Opção inválida. Tente novamente.")
 
+# 7. Ver todos os posts (primeiros 5)
+def ver_todos_os_posts():
+    print("\n--- Todos os Posts ---")
+    url = "https://jsonplaceholder.typicode.com/posts"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        posts = resposta.json()
+        for post in posts[:5]:  # Mostra só os primeiros 5
+            print(f"\nID: {post['id']}")
+            print(f"Título: {post['title']}")
+            print(f"Corpo: {post['body']}")
+            interacoes["posts_vistos"] += 1
+    else:
+        print("Erro ao buscar os posts. Tente novamente mais tarde.")
+
 
