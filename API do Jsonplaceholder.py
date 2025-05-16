@@ -66,6 +66,43 @@ while not usuario_logado:
         usuario_logado = fazer_login()
 
 
+# 5. Contadores de interações
+interacoes = {
+    "posts_vistos": 0,
+    "comentarios_vistos": 0,
+    "posts_criados": 0
+}
 
+# 6. Menu principal de ações
+def menu_usuario(usuario):
+    while True:
+        print("\n--- Menu Principal ---")
+        print("1 - Ver todos os posts")
+        print("2 - Ver comentários de um post")
+        print("3 - Ver meus próprios posts")
+        print("4 - Ver posts de outro usuário")
+        print("5 - Criar um novo post")
+        print("6 - Sair")
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == "1":
+            ver_todos_os_posts()
+        elif escolha == "2":
+            ver_comentarios()
+        elif escolha == "3":
+            ver_posts_usuario(usuario["codigo"])
+        elif escolha == "4":
+            filtrar_por_usuario()
+        elif escolha == "5":
+            criar_novo_post(usuario["codigo"])
+        elif escolha == "6":
+            print("\nResumo das interações:")
+            print(f"Posts visualizados: {interacoes['posts_vistos']}")
+            print(f"Comentários visualizados: {interacoes['comentarios_vistos']}")
+            print(f"Posts criados: {interacoes['posts_criados']}")
+            print("Saindo do sistema. Até logo!")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
 
 
