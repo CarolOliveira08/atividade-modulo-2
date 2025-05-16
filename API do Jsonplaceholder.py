@@ -153,3 +153,10 @@ def criar_post():
     else:
         print("Erro ao criar post.\n")
 
+# 9. Função para mostrar resumo das interações
+def mostrar_resumo():
+    print("\n=== RESUMO DAS INTERAÇÕES ===")
+    print(f"Posts visualizados: {interacoes['posts_vistos']}")
+    print(f"Comentários visualizados: {interacoes['comentarios_vistos']}")
+    print(f"Posts criados: {interacoes['posts_criados']}")
+    print("\nObrigado por usar o sistema!")
