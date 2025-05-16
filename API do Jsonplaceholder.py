@@ -184,3 +184,29 @@ def filtrar_por_usuario():
             print("Nenhum post encontrado para esse usuário.")
     else:
         print("Erro ao buscar os posts.")
+
+
+# 11. Criar novo post
+def criar_novo_post(user_id):
+    print("\n--- Criar Novo Post ---")
+    titulo = input("Digite o título do post: ")
+    corpo = input("Digite o conteúdo do post: ")
+
+    dados = {
+        "title": titulo,
+        "body": corpo,
+        "userId": user_id
+    }
+
+    url = "https://jsonplaceholder.typicode.com/posts"
+    resposta = requests.post(url, json=dados)
+
+    if resposta.status_code == 201:
+        post_criado = resposta.json()
+        print("\nPost criado com sucesso!")
+        print(f"ID: {post_criado['id']}")
+        print(f"Título: {post_criado['title']}")
+        print(f"Corpo: {post_criado['body']}")
+        interacoes["posts_criados"] += 1
+    else:
+        print("Erro ao criar o post.")
