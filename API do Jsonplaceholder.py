@@ -59,3 +59,19 @@ def menu():
             break
         else:
             print("Opção inválida. Tente novamente.\n")
+
+
+# 4. Função para visualizar todos os posts
+def visualizar_posts():
+    print("\n=== LISTA DE POSTS ===")
+    url = "https://jsonplaceholder.typicode.com/posts"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        posts = resposta.json()
+        for post in posts:
+            print(f"ID: {post['id']} | Título: {post['title']}")
+        interacoes["posts_vistos"] += len(posts)
+        print(f"\nTotal de {len(posts)} posts exibidos.\n")
+    else:
+        print("Erro ao buscar os posts.\n")
