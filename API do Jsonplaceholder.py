@@ -75,3 +75,21 @@ def visualizar_posts():
         print(f"\nTotal de {len(posts)} posts exibidos.\n")
     else:
         print("Erro ao buscar os posts.\n")
+
+# 5. Função para visualizar comentários de um post
+def visualizar_comentarios():
+    print("\n=== COMENTÁRIOS DE UM POST ===")
+    post_id = input("Digite o ID do post: ")
+
+    url = f"https://jsonplaceholder.typicode.com/posts/{post_id}/comments"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        comentarios = resposta.json()
+        for comentario in comentarios:
+            print(f"- {comentario['name']} ({comentario['email']}): {comentario['body']}\n")
+        interacoes["comentarios_vistos"] += len(comentarios)
+        print(f"Total de {len(comentarios)} comentários exibidos.\n")
+    else:
+        print("Erro ao buscar comentários.\n")
+
