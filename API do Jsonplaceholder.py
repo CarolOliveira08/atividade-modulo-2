@@ -143,3 +143,44 @@ def ver_comentarios():
             print("Nenhum comentário encontrado para esse post.")
     else:
         print("Erro ao buscar os comentários.")
+
+# 9. Ver posts do usuário logado
+def ver_posts_usuario(user_id):
+    print("\n--- Meus Posts ---")
+    url = f"https://jsonplaceholder.typicode.com/posts?userId={user_id}"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        posts = resposta.json()
+        if posts:
+            for post in posts[:3]:  # Mostra até 3 posts
+                print(f"\nID: {post['id']}")
+                print(f"Título: {post['title']}")
+                print(f"Corpo: {post['body']}")
+                interacoes["posts_vistos"] += 1
+        else:
+            print("Você ainda não tem posts.")
+    else:
+        print("Erro ao buscar seus posts.")
+
+
+# 10. Ver posts de outro usuário
+def filtrar_por_usuario():
+    print("\n--- Ver Posts de Outro Usuário ---")
+    outro_id = input("Digite o ID do outro usuário (1 a 10): ")
+
+    url = f"https://jsonplaceholder.typicode.com/posts?userId={outro_id}"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        posts = resposta.json()
+        if posts:
+            for post in posts[:3]:  # Mostra até 3 posts
+                print(f"\nID: {post['id']}")
+                print(f"Título: {post['title']}")
+                print(f"Corpo: {post['body']}")
+                interacoes["posts_vistos"] += 1
+        else:
+            print("Nenhum post encontrado para esse usuário.")
+    else:
+        print("Erro ao buscar os posts.")
