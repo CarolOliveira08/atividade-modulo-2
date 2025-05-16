@@ -122,3 +122,24 @@ def ver_todos_os_posts():
         print("Erro ao buscar os posts. Tente novamente mais tarde.")
 
 
+# 8. Ver comentários de um post
+def ver_comentarios():
+    print("\n--- Comentários de um Post ---")
+    post_id = input("Digite o ID do post: ")
+
+    url = f"https://jsonplaceholder.typicode.com/comments?postId={post_id}"
+    resposta = requests.get(url)
+
+    if resposta.status_code == 200:
+        comentarios = resposta.json()
+        if comentarios:
+            print(f"\nComentários do Post {post_id}:")
+            for c in comentarios[:3]:  # Mostra apenas 3 comentários
+                print(f"\nNome: {c['name']}")
+                print(f"E-mail: {c['email']}")
+                print(f"Comentário: {c['body']}")
+                interacoes["comentarios_vistos"] += 1
+        else:
+            print("Nenhum comentário encontrado para esse post.")
+    else:
+        print("Erro ao buscar os comentários.")
