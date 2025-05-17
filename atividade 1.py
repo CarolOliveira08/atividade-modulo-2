@@ -23,6 +23,7 @@ def login():
     print("Usuário ou senha inválidos.\n")
     return None
 
+
 # Função do menu
 def menu():
     print("\n=== MENU INTERATIVO ===")
